@@ -415,6 +415,10 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                         }
                     }
 
+                    if(!lensOk) {
+                        lensOk = lens_from_make_and_model();
+                    }
+
                     if (!lensOk && mnote->getTag("Lens")) {
                         std::string ldata = mnote->getTag("Lens")->valueToString();
                         size_t i = 0, j = 0;
