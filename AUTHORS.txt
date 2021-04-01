@@ -15,6 +15,7 @@ Development contributors, in last name alphabetical order:
   Maciek Dworak
   Michael Ezra
   Flössie
+  Rüdiger Franke
   Jean-Christophe Frisch
   Ilias Giarimis
   Alberto Griggio
@@ -59,6 +60,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Oscar de Lama
   Lebarhon
   Karl Loncarek
+  Patrick Lopatto
   Jie Luo
   Paul Matthijsse
   Wim ter Meer

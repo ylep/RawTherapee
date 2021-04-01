@@ -82,6 +82,7 @@ public:
             {"17:22", 17.0 / 22.0},             // L1.294...,   P0.772...
             {"45:35 - ePassport", 45.0 / 35.0}, // L1.285,...   P0.777...
             {"64:27", 64.0 / 27.0},             // L2.370...,   P0.421...
+            {"13:18", 13.0 / 18.0},             // L1.384...,   P0.722...
         }
     {
     }
@@ -191,7 +192,7 @@ Crop::Crop():
     methodgrid->attach (*resetCrop, 2, 2, 2, 1);
     pack_start (*methodgrid, Gtk::PACK_EXPAND_WIDGET, 0 );
 
-    Gtk::HSeparator* methodseparator = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator* methodseparator = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     methodseparator->get_style_context()->add_class("grid-row-separator");
     pack_start (*methodseparator, Gtk::PACK_SHRINK, 0);
 
@@ -241,7 +242,7 @@ Crop::Crop():
     ppigrid->set_column_homogeneous (true);
     setExpandAlignProperties(ppigrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    Gtk::HSeparator* ppiseparator = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator* ppiseparator = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     ppiseparator->get_style_context()->add_class("grid-row-separator");
 
     Gtk::Grid* ppisubgrid = Gtk::manage(new Gtk::Grid());

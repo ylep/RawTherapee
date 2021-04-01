@@ -45,7 +45,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
 endif()
 
 # Warning for GCC 10, which causes problems #5749:
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "10.1")
     message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
@@ -143,6 +143,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=delete-incomplete")
 # Do net set math errno, as we never check its value.
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-math-errno")
+
+# suppress warning https://github.com/Beep6581/RawTherapee/issues/6105
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-attributes")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
 
 # Special treatment for x87 and x86-32 SSE (see GitHub issue #4324)
 include(FindX87Math)
@@ -456,13 +460,13 @@ if(GTK_VERSION VERSION_GREATER "3.24.1" AND GTK_VERSION VERSION_LESS "3.24.7")
     )
 endif()
 
-pkg_check_modules(GLIB2 REQUIRED glib-2.0>=2.44)
-pkg_check_modules(GLIBMM REQUIRED glibmm-2.4>=2.44)
+pkg_check_modules(GLIB2 REQUIRED glib-2.0>=2.48)
+pkg_check_modules(GLIBMM REQUIRED glibmm-2.4>=2.48)
 pkg_check_modules(CAIROMM REQUIRED cairomm-1.0)
-pkg_check_modules(GIO REQUIRED gio-2.0>=2.44)
-pkg_check_modules(GIOMM REQUIRED giomm-2.4>=2.44)
-pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.44)
-pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.44)
+pkg_check_modules(GIO REQUIRED gio-2.0>=2.48)
+pkg_check_modules(GIOMM REQUIRED giomm-2.4>=2.48)
+pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.48)
+pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.48)
 pkg_check_modules(SIGC REQUIRED sigc++-2.0>=2.3.1)
 pkg_check_modules(LENSFUN REQUIRED lensfun>=0.2)
 pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.40)
@@ -483,7 +487,7 @@ pkg_check_modules(LCMS REQUIRED lcms2>=2.6)
 pkg_check_modules(EXPAT REQUIRED expat>=2.1)
 pkg_check_modules(FFTW3F REQUIRED fftw3f)
 pkg_check_modules(IPTCDATA REQUIRED libiptcdata)
-pkg_check_modules(TIFF REQUIRED libtiff-4>=4.0.4)
+find_package(TIFF 4.0.4 REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -493,7 +497,11 @@ endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND (NOT APPLE))
-    pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
+    option(USE_LIBCANBERRA "Build with libcanberra" ON)
+    if(USE_LIBCANBERRA)
+       pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
+       add_definitions(-DUSE_CANBERRA)
+    endif()
 endif()
 
 if(WITH_MYFILE_MMAP)
@@ -637,14 +645,8 @@ else()
 endif()
 
 # Get compiler name and version.
-    get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
-    set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
-if(NOT APPLE)
-    execute_process(
-        COMMAND gcc -dumpversion
-        OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(COMPILER_INFO "gcc ${GCC_VERSION}")
-endif()
+get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
+set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
 
 # Get C++ and linker flags for rtengine (the GUI's C++ flags may have fewer
 # flags):
@@ -681,7 +683,7 @@ if(WIN32)
 elseif(APPLE)
     set(
          ABOUT_COMMAND_WITH_ARGS
-         cmake
+         ${CMAKE_COMMAND}
              -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
              -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake

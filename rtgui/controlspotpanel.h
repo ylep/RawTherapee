@@ -75,8 +75,11 @@ public:
         double balanh;
         double colorde;
         double colorscope;
+        double avoidrad;
+        bool hishow;
         bool activ;
         bool avoid;
+        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -245,8 +248,10 @@ private:
 
     void adjusterChanged(Adjuster* a, double newval) override;
 
+    void hishowChanged();
     void activChanged();
     void avoidChanged();
+    void avoidmunChanged();
     void blwhChanged();
     void recursChanged();
     void laplacChanged();
@@ -305,8 +310,11 @@ private:
         Gtk::TreeModelColumn<double> balanh;
         Gtk::TreeModelColumn<double> colorde;
         Gtk::TreeModelColumn<double> colorscope;
+        Gtk::TreeModelColumn<double> avoidrad;
+        Gtk::TreeModelColumn<bool> hishow;
         Gtk::TreeModelColumn<bool> activ;
         Gtk::TreeModelColumn<bool> avoid;
+        Gtk::TreeModelColumn<bool> avoidmun;
         Gtk::TreeModelColumn<bool> blwh;
         Gtk::TreeModelColumn<bool> recurs;
         Gtk::TreeModelColumn<bool> laplac;
@@ -355,6 +363,7 @@ private:
     Gtk::Button* const button_visibility_;
     sigc::connection buttonvisibilityconn_;
 
+
     MyComboBoxText* const prevMethod_;
     sigc::connection prevMethodconn_;
     MyComboBoxText* const shape_;
@@ -390,13 +399,18 @@ private:
     Adjuster* const balanh_;
     Adjuster* const colorde_;
     Adjuster* const colorscope_;
+    Adjuster* const avoidrad_;
     Adjuster* const scopemask_;
     Adjuster* const lumask_;
 
+    Gtk::CheckButton* const hishow_;
+    sigc::connection hishowconn_;
     Gtk::CheckButton* const activ_;
     sigc::connection activConn_;
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;
+    Gtk::CheckButton* const avoidmun_;
+    sigc::connection avoidmunConn_;
     Gtk::CheckButton* const blwh_;
     sigc::connection blwhConn_;
     Gtk::CheckButton* const recurs_;
@@ -418,7 +432,8 @@ private:
     Gtk::ToggleButton* const preview_;
     sigc::connection previewConn_;
 
-    Gtk::HBox* const ctboxshape;
+    Gtk::Box* const ctboxshape;
+    Gtk::Box* const ctboxshapemethod;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

@@ -602,7 +602,9 @@ int DCraw::parseCR3(
                             relpos_inBox += lTag;
                         }
                     }
-
+                    if (!szItem) {
+                        goto fin;
+                    }
                     relpos_inDir += szItem;
                 }
 
@@ -841,7 +843,7 @@ inline void crxFillBuffer(CrxBitstream* bitStrm)
 #endif
 
             if (bitStrm->curBufSize < 1) {  // nothing read
-                throw std::exception();
+                throw std::runtime_error("Unexpected end of file in CRX bitstream");
             }
 
             bitStrm->mdatSize -= bitStrm->curBufSize;
@@ -3130,7 +3132,8 @@ void DCraw::crxLoadRaw()
         hdr.tileHeight >>= 1;
     }
 
-//  /*imgdata.color.*/maximum = (1 << hdr.nBits) - 1;
+    //  /*imgdata.color.*/maximum = (1 << hdr.nBits) - 1;
+    tiff_bps = hdr.nBits;
 
     std::uint8_t* const hdrBuf = static_cast<std::uint8_t*>(malloc(hdr.mdatHdrSize));
 
